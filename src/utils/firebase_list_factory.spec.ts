@@ -69,6 +69,17 @@ describe('onChildAdded', () => {
     expect(onChildAdded([1], 2)).toEqual([1, 2]);
   });
 
+  it('should use prevKey to order the list', () => {
+    let arr = [
+      new MockFirebaseValue(1, 'd'),
+      new MockFirebaseValue(2, 'c'),
+      new MockFirebaseValue(4, 'a')
+    ];
+    let result: MockFirebaseValue[] = onChildAdded(arr, new MockFirebaseValue(3, 'd'), 'c');
+    result = result.map((item) => item.val());
+    expect(result).toEqual([1, 2, 3, 4]);
+  });
+
 
   it('should not mutate the input array', () => {
     var inputArr = [1];
@@ -135,3 +146,15 @@ describe('onChildRemoved', () => {
   });
 
 });
+
+class MockFirebaseValue {
+  constructor(private _val: any, private _key: string) {}
+
+  val() {
+    return this._val;
+  }
+
+  key() {
+    return this._key;
+  }
+}

@@ -7,8 +7,8 @@ export function FirebaseListFactory (absoluteUrl:string, {preserveSnapshot}:Fire
   return new FirebaseListObservable((obs:Observer<any[]>) => {
     var arr:any[] = [];
 
-    ref.on('child_added', (child:any) => {
-      arr = onChildAdded(arr, child);
+    ref.on('child_added', (child:any, prevKey: string) => {
+      arr = onChildChanged(arr, child, prevKey);
       obs.next(preserveSnapshot ? arr : arr.map(unwrapMapFn));
     });
 
@@ -35,10 +35,11 @@ function unwrapMapFn (snapshot:FirebaseDataSnapshot): any {
   return snapshot.val();
 }
 
-export function onChildAdded(arr:any[], child:any): any[] {
-  var newArray = arr.slice();
+export function onChildAdded(arr:any[], child:any, prevKey: string): any[] {
+  return onChildChanged(arr, child, prevKey);
+  /*var newArray = arr.slice();
   newArray.push(child);
-  return newArray;
+  return newArray;*/
 }
 
 export function onChildChanged(arr:any[], child:any, prevKey:string): any[] {
